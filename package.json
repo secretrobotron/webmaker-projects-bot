@@ -10,7 +10,7 @@
   "author": "secretrobotron",
   "license": "ISC",
   "dependencies": {
-    "irc": "^0.3.12",
+    "irc": "git://github.com/secretrobotron/node-irc.git#issue395",
     "pg": "^4.4.1",
     "request": "^2.61.0"
   }
