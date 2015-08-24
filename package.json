@@ -4,6 +4,7 @@
   "description": "Bot for showing webmaker projects in webmaker IRC channel",
   "main": "worker.js",
   "scripts": {
+    "start": "source .env && node worker.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "secretrobotron",
