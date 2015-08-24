@@ -1,0 +1,17 @@
+{
+  "name": "webmaker-projects-bot",
+  "version": "0.0.1",
+  "description": "Bot for showing webmaker projects in webmaker IRC channel",
+  "main": "worker.js",
+  "scripts": {
+    "start": "source .env && node worker.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "secretrobotron",
+  "license": "ISC",
+  "dependencies": {
+    "irc": "^0.3.12",
+    "pg": "^4.4.1",
+    "request": "^2.61.0"
+  }
+}

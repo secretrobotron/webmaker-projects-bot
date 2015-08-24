@@ -1,0 +1,1 @@
+create table projects (id serial primary key, project_id integer not null, comment varchar(250), date_added timestamp default current_timestamp, date_used timestamp);
