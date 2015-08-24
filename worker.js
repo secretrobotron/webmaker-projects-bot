@@ -10,9 +10,18 @@ function getOneProject () {
 
   var currentDate = new Date();
 
-  if (currentDate.getHours() > process.env.END_HOUR) {
-    console.log('Past my bed time! Good night :).');
-    setTimeout(getOneProject, (process.env.END_HOUR - process.env.START_HOUR) * 3600000);         // go to sleep until morning :)
+  if (currentDate.getHours() > parseInt(process.env.END_HOUR)) {
+    var sleepHours = 24 - currentDate.getHours() + parseInt(process.env.START_HOUR);
+    console.log('Past my bed time! Good night. See you in ' + sleepHours + ' hours :).');
+
+    setTimeout(getOneProject, sleepHours * 3600000);         // go to sleep until morning :)
+    return;
+  }
+  else if (currentDate.getHours() < parseInt(process.env.START_HOUR)) {
+    var sleepHours = parseInt(process.env.START_HOUR) - currentDate.getHours();
+    console.log('Yaaawn... Still have some time to sleep. See you in ' + sleepHours + ' hours :).');
+
+    setTimeout(getOneProject, sleepHours * 3600000);         // go to sleep again :)
     return;
   }
 
