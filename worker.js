@@ -5,20 +5,22 @@ var request = require('request');
 var pgConnectionString = process.env.PG_CONN_STRING;
 var sleepInterval = process.env.SLEEP_DURATION;                            // in milliseconds
 
-console.log('Connecting to pg @ ' + process.env.PG_CONN_STRING + '...');
-pg.connect(pgConnectionString, function(err, client, done) {
+function getOneProject () {
+  console.log('Waking up!');
 
-  console.log('Connecting to irc @ ' + process.env.IRC_SERVER + ' as ' + process.env.IRC_NICK + '...');
-  var ircClient = new irc.Client(process.env.IRC_SERVER, process.env.IRC_NICK, {
-    channels: [process.env.IRC_CHANNEL]
-  });
+  var currentDate = new Date();
 
-  ircClient.addListener('error', function(message) {
-    console.error('IRC client error: ', message);
-  });
+  if (currentDate.getHours() > process.env.END_HOUR) {
+    console.log('Past my bed time! Good night :).');
+    setTimeout(getOneProject, (process.env.END_HOUR - process.env.START_HOUR) * 3600000);         // go to sleep until morning :)
+    return;
+  }
 
-  function getOneProject () {
-    console.log('Waking up!');
+  console.log('Connecting to pg @ ' + process.env.PG_CONN_STRING + '...');
+  pg.connect(pgConnectionString, function(err, client, done) {
+    if (err) {
+      return console.error('error fetching client from pool', err);
+    }
 
     client.query('SELECT * FROM projects WHERE date_used IS NULL ORDER BY date_added ASC LIMIT 1;', function (err, result) {
       if (err) {
@@ -31,6 +33,15 @@ pg.connect(pgConnectionString, function(err, client, done) {
       var project = result.rows[0];
 
       if (project) {
+        console.log('Connecting to irc @ ' + process.env.IRC_SERVER + ' as ' + process.env.IRC_NICK + '...');
+        var ircClient = new irc.Client(process.env.IRC_SERVER, process.env.IRC_NICK, {
+          channels: [process.env.IRC_CHANNEL]
+        });
+
+        ircClient.addListener('error', function(message) {
+          console.error('IRC client error: ', message);
+        });
+
         console.log('Found project ' + project.id + '! Updating db entry...');
         client.query('UPDATE projects SET date_used = current_timestamp WHERE id = ' + project.id);
 
@@ -55,9 +66,10 @@ pg.connect(pgConnectionString, function(err, client, done) {
 
           console.log('Talking about it on IRC...');
           var projectURL = process.env.WEBMAKER_PLAYER_PREFIX + '?user=' + projectData.project.user_id + '&project=' + project.project_id;
-          // ircClient.say(process.env.IRC_CHANNEL, project.comment + ': ' + projectURL);
+          ircClient.say(process.env.IRC_CHANNEL, project.comment + ': ' + projectURL);
 
           console.log('Done :). Sleeping...');
+          ircClient.disconnect();
           done();
           setTimeout(getOneProject, sleepInterval);
         });
@@ -68,13 +80,8 @@ pg.connect(pgConnectionString, function(err, client, done) {
         setTimeout(getOneProject, sleepInterval);
       }
     });
-  }
 
-  if (err) {
-    return console.error('error fetching client from pool', err);
-  }
+  });
+}
 
-  getOneProject();
-});
-
-
+getOneProject();
