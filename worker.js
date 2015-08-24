@@ -3,7 +3,7 @@ var irc = require('irc');
 var request = require('request');
 
 var pgConnectionString = process.env.PG_CONN_STRING;
-var sleepInterval = 1800000;                            // 30 minutes
+var sleepInterval = process.env.SLEEP_DURATION;                            // in milliseconds
 
 console.log('Connecting to pg @ ' + process.env.PG_CONN_STRING + '...');
 pg.connect(pgConnectionString, function(err, client, done) {
