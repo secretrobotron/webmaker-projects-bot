@@ -8,7 +8,7 @@ var sleepInterval = process.env.SLEEP_DURATION;                            // in
 var _ircClient;
 
 function getIRCClient (callback) {
-  if (!_ircClient) {
+  if (!_ircClient || !_ircClient.conn.connected) {
     console.log('Connecting to irc @ ' + process.env.IRC_SERVER + ' as ' + process.env.IRC_NICK + '...');
     _ircClient = new irc.Client(process.env.IRC_SERVER, process.env.IRC_NICK, {
       channels: [process.env.IRC_CHANNEL],
