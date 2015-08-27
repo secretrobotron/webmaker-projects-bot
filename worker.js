@@ -37,7 +37,21 @@ function getOneProject () {
 
   var currentDate = new Date();
 
-  if (currentDate.getHours() > parseInt(process.env.END_HOUR)) {
+  if (currentDate.getDay() === 6) {
+    var sleepHours = 24 + (24 - currentDate.getHours()); // a day and whatever else is left until Monday
+    console.log('It\'s Saturday. Come on... Going back to bed for ' + sleepHours + ' hours :). zzzzzzz');
+
+    setTimeout(getOneProject, sleepHours * 3600000);
+    return;
+  }
+  else if (currentDate.getDay() === 7) {
+    var sleepHours = 24 - currentDate.getHours(); // whatever else is left until Monday
+    console.log('It\'s Sunday. Still BBQ\'n for ' + sleepHours + ' more hours :). *sizzle*');
+
+    setTimeout(getOneProject, sleepHours * 3600000);
+    return;
+  }
+  else if (currentDate.getHours() > parseInt(process.env.END_HOUR)) {
     var sleepHours = 24 - currentDate.getHours() + parseInt(process.env.START_HOUR);
     console.log('Past my bed time! Good night. See you in ' + sleepHours + ' hours :).');
 
